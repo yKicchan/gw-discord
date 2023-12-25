@@ -1,20 +1,36 @@
 {
   "name": "gw-discord",
-  "private": true,
-  "sideEffects": false,
+  "version": "0.1.0",
+  "description": "A web site for the GWD community.",
+  "author": "yKicchan",
+  "license": "UNLICENSED",
   "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yKicchan/gw-discord.git"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
   "scripts": {
     "build": "remix build",
-    "dev": "remix dev --manual -c \"npm run start\"",
-    "lint": "eslint --ignore-path .gitignore --cache --cache-location ./node_modules/.cache/eslint .",
+    "dev": "remix dev --manual -c \"yarn start\"",
+    "lint": "tsc & eslint --ignore-path .gitignore --cache --cache-location ./node_modules/.cache/eslint . & prettier --ignore-path .gitignore --check .",
+    "fix": "eslint --ignore-path .gitignore --cache --cache-location ./node_modules/.cache/eslint . --fix && prettier --ignore-path .gitignore --write .",
     "start": "wrangler pages dev --compatibility-date=2023-06-21 ./public",
-    "typecheck": "tsc"
+    "deploy": "yarn build && wrangler pages deploy ./public"
+  },
+  "lint-staged": {
+    "*.{ts,tsx}": "tsc & eslint & prettier"
   },
   "dependencies": {
     "@remix-run/cloudflare": "^2.4.1",
     "@remix-run/cloudflare-pages": "^2.4.1",
     "@remix-run/css-bundle": "^2.4.1",
     "@remix-run/react": "^2.4.1",
+    "@supabase/auth-ui-react": "^0.4.6",
+    "@supabase/auth-ui-shared": "^0.1.8",
+    "@supabase/supabase-js": "^2.39.1",
     "isbot": "^3.6.8",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
@@ -25,16 +41,18 @@
     "@types/react": "^18.2.20",
     "@types/react-dom": "^18.2.7",
     "@typescript-eslint/eslint-plugin": "^6.7.4",
-    "eslint": "^8.38.0",
+    "@typescript-eslint/parser": "^6.15.0",
+    "eslint": "^8.56.0",
     "eslint-config-prettier": "^9.0.0",
     "eslint-plugin-import": "^2.28.1",
     "eslint-plugin-jsx-a11y": "^6.7.1",
     "eslint-plugin-react": "^7.33.2",
     "eslint-plugin-react-hooks": "^4.6.0",
+    "husky": "^8.0.3",
+    "lint-staged": "^15.2.0",
+    "prettier": "^3.1.1",
+    "tailwindcss": "^3.4.0",
     "typescript": "^5.1.0",
     "wrangler": "3.8.0"
-  },
-  "engines": {
-    "node": ">=18.0.0"
   }
 }
