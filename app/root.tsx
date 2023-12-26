@@ -1,9 +1,9 @@
 import type { LinksFunction, LoaderFunctionArgs } from "@remix-run/cloudflare";
 import { Links, LiveReload, Meta, Outlet, Scripts, ScrollRestoration, useLoaderData } from "@remix-run/react";
 import styles from "./tailwind.css";
-import { createClient, Session } from "@supabase/supabase-js";
-import { SupabaseProvider } from "~/lib/supabase";
-import { useEffect, useMemo, useState } from "react";
+import React from "react";
+import { SupabaseProvider } from "~/lib/supabase/provider";
+import { useSupabaseInit } from "~/lib/supabase/use-spabase-init";
 
 export const links: LinksFunction = () => [{ rel: "stylesheet", href: styles }];
 
@@ -17,24 +17,8 @@ export async function loader({ context }: LoaderFunctionArgs) {
 }
 
 export default function App() {
-  const { ENV } = useLoaderData<ReturnType<typeof loader>>();
-  const client = useMemo(() => createClient(ENV.SUPABASE_URL, ENV.SUPABASE_ANON_KEY), [ENV]);
-  const [session, setSession] = useState<Session | null>(null);
-  useEffect(() => {
-    if (!client) return;
-
-    client.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-    });
-
-    const {
-      data: { subscription },
-    } = client.auth.onAuthStateChange((_event, session) => {
-      setSession(session);
-    });
-
-    return () => subscription.unsubscribe();
-  }, [client, session]);
+  const { ENV } = useLoaderData<typeof loader>();
+  const { client, session } = useSupabaseInit(ENV.SUPABASE_URL, ENV.SUPABASE_ANON_KEY);
 
   return (
     <html lang="en" className="dark:bg-neutral-900 dark:text-white">

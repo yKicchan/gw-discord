@@ -1,24 +1,24 @@
 import type { MetaFunction } from "@remix-run/cloudflare";
-import { SupabaseAuth, useSupabase } from "~/lib/supabase";
+import { SupabaseAuth } from "~/lib/supabase/supabase-auth";
+import { useSupabase } from "~/lib/supabase/provider";
 
 export const meta: MetaFunction = () => {
   return [{ title: "GWD" }, { name: "description", content: "Welcome to GWD community page!" }];
 };
 
 export default function Index() {
-  const ctx = useSupabase();
+  const { client, session } = useSupabase();
 
-  if (!ctx) return null;
+  if (!client) return null;
 
-  if (!ctx.session) {
-    return <SupabaseAuth client={ctx.client} />;
+  if (!session) {
+    return <SupabaseAuth client={client} />;
   }
+
   return (
     <>
-      <div>
-        Hello {ctx.session.user.user_metadata.custom_claims.global_name || ctx.session.user.user_metadata.full_name}!!
-      </div>
-      <button onClick={() => ctx.client.auth.signOut()}>sing out</button>
+      <div>Hello {session.user.user_metadata.custom_claims.global_name || session.user.user_metadata.full_name}!!</div>
+      <button onClick={() => client.auth.signOut()}>sing out</button>
     </>
   );
 }
